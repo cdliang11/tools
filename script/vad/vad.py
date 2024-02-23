@@ -19,12 +19,11 @@ import argparse
 import glob2
 import pypeln as pl
 from tqdm import tqdm
-from tools.vad_process import filter
+from vad_process import filter
 
 
-def vad_main(wav_list):
-    old_wav, new_wav = wav_list[0], wav_list[1]
-    filter(old_wav, new_wav)
+def vad_main(old_wav, new_wav, mode=3):
+    filter(old_wav, new_wav, mode)
 
 
 if __name__ == '__main__':
@@ -32,6 +31,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', required=True)
     parser.add_argument('--re', required=True)
     parser.add_argument('--nj', type=int, default=16)
+    parser.add_argument('--mode', type=int, default=3)
     args = parser.parse_args()
 
     # glob
@@ -43,7 +43,7 @@ if __name__ == '__main__':
         new_wav = wav.replace(re, re + '_vad')
         if not os.path.exists(os.path.dirname(new_wav)):
             os.makedirs(os.path.dirname(new_wav))
-        wav_list.append([old_wav, new_wav])
+        wav_list.append((old_wav, new_wav, args.mode))
     lines_num = len(wav_list)
     t_bar = tqdm(ncols=100, total=lines_num)
     for _ in pl.process.map(vad_main,
