@@ -16,8 +16,6 @@ import contextlib
 import wave
 import webrtcvad
 
-MODE = 3
-
 
 def read_wave(path):
     """Reads a .wav file.
@@ -89,9 +87,9 @@ def voiced_frames_expand(voiced_frames, duration=2):
     return expand_voiced_frames
 
 
-def filter(wavpath, save_path):
+def filter(wavpath, save_path, mode=3):
     audio, sample_rate = read_wave(wavpath)
-    vad = webrtcvad.Vad(MODE)
+    vad = webrtcvad.Vad(mode)
     frames = frame_generator(30, audio, sample_rate)
     frames = list(frames)
     voiced_frames = vad_collector(sample_rate, vad, frames)
