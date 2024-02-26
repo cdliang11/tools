@@ -37,6 +37,5 @@ exp
 data
 raw_wav
 tensorboard
-**/*build*
 
 *.onnx
