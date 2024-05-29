@@ -32,10 +32,17 @@ speculative decoding算法范式：
 
 根据是否需要draft模型，投机采样可以分为independent-drafting ，self-drafting两类：
 
-|      | 类型                 | 模型             | 链接                                                                                                 |
-|------|----------------------|------------------|------------------------------------------------------------------------------------------------------|
-| 高通 | Speculative sampling | 0.7B + 7B llama2 | https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/Generative-AI-at-the-edge.pdf |
-| 阿里 | Speculative sampling | 1.8B + 14B qwen  | https://mp.weixin.qq.com/s/M6bisR_rTHM-vyeOD9ILXA                                                    |
+| 类型                 | 代表方法                        | 特定                                                          | 优缺点                                                                |
+|----------------------|---------------------------------|---------------------------------------------------------------|-----------------------------------------------------------------------|
+| independent-drafting | Speculative sampling <br> specinfer | 1. 小模型 + 大模型 <br> 2. 小模型负责生成draft seqence，大模型负责verify | 1. 方便不同设备部署 CPU(小) + GPU(大) <br> 2. 较难得到高质量的小模型，接受率偏低 |
+| self-drafting        | MEDUSA <br> EAGLE <br> Lookahead        | 单一模型：复用大模型的主干网络，只做少量的调整                | 1. 方便做joint training <br> 2. 模型统一，接受率高                               |
+
+
+### 应用案例
+|           | 类型                 | 模型             | 链接                                                                                                 |
+|-----------|----------------------|------------------|------------------------------------------------------------------------------------------------------|
+| 高通      | Speculative sampling | 0.7B + 7B llama2 | https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/Generative-AI-at-the-edge.pdf |
+| 阿里      | Speculative sampling | 1.8B + 14B qwen  | https://mp.weixin.qq.com/s/M6bisR_rTHM-vyeOD9ILXA                                                    |
 
 
 > 本文会介绍最朴素的投机采样算法 (Speculative sampling)，medusa 和 eagle算法会在后面更新。
@@ -115,10 +122,15 @@ speculative decoding算法范式：
 >
 > 代码使用llama.cpp
 
-|      | 类型                 | 模型             | 链接                                                                                                 |
-|------|----------------------|------------------|------------------------------------------------------------------------------------------------------|
-| 高通 | Speculative sampling | 0.7B + 7B llama2 | https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/Generative-AI-at-the-edge.pdf |
-| 阿里 | Speculative sampling | 1.8B + 14B qwen  | https://mp.weixin.qq.com/s/M6bisR_rTHM-vyeOD9ILXA                                                    |
+| Target model    | draft             | Draft num |               | accept_rate | 加速比 |
+|-----------------|-------------------|-----------|---------------|-------------|--------|
+| qwen1.5-7B-fp16 | N/A               | N/A       | 1.68 tokens/s | N/A         | -      |
+|                 | qwen1.5-0.5B-q4_0 | 3         | 2.435 t/s     | 42.478%     | 1.44X  |
+|                 |                   | 6         | 1.865 t/s     | 19.188%     | 1.11X  |
+|                 | qwen1.5-1.8B-q4_0 | 2         | 1.933 t/s     | 44.141%     | 1.15X  |
+|                 |                   | 3         | 2.133 t/s     | 38.056%     | 1.26X  |
+|                 |                   | 6         | 1.848 t/s     | 24.057%     | 1.1X   |
+|                 |                   | 10        | 1.502 t/s     | 17.474%     | 0.89X  |
 
 实测结果加速比没有达到预期，因为接受率太低，如果要有2X的加速，接受比尽量要在75%以上，越高越好。
 
