@@ -45,23 +45,22 @@
 统计语言模型通过概率P（词序列）来衡量这个词序列与语言表达习惯的符合程度，P（词序列）越低，表示在解码过程中代表这个词序列的搜索路径越应该被舍弃。计算公式如下：
 
 $$
-\begin{aligned}
-
+\begin{align}
 P\left(\text { 词序列 } \text { word }_1 \text { word }_2 \ldots \text { word }_N\right) &= P\left(\text { word }_1\right) P\left(\text { word }_2 \mid \text { word }_1\right) ... P\left(\text { word }_N \mid \text { word }_1 \text { word }_2 \ldots \text { word }_{N-1}\right) \\
-
 & =\prod^N P\left(\text { word }_n \mid \text { word }_1^{n-1}\right) \quad \text { word }_1^{n-1} \text { 代表word } d_1 \text { word }_2 \ldots \text { word }_{n-1}
-\end{aligned}
+\end{align}
 $$
 
 以 $context_n$表示 $word_n$ 的历史信息 $word_1^{n-1}$ , 如果不对$context_n$的长度加以限制的话，$P(word_n | context_n)$，根本无法估计。
 
 为了解决这个问题，对上面的概率公式引入$n-1$阶马尔可夫假设：假设$word_i$的出现概率只依赖于部分历史信息，于其他任何信息是相互独立的。这就是ngram语言模型的原理。修改后的公式如下：
+
 $$
-\begin{aligned}
+\begin{align}
 P\left(\text { 词序列 } \text { oord }_1 \text { word }_2 \ldots \text { word }_N\right)= & \prod^N P\left(\text { word }_i \mid \text { word }_{i-n+1}^{i-1}\right) \\
 
 & \text { word }_{i-n+1}^{i-1} \text { 代表 } \text { word }_{i-n+1} . \text { word }_{i-n+1} ... \text { word }_{i-1}
-\end{aligned}
+\end{align}
 $$
 
 常情况下n=1,2,3。对于再高阶的4-gram，5-gram就很少见，因为需要非常大的语料才能训练充分高阶的语言模型，而且模型本身的体积也会非常大（占内存）。
@@ -71,10 +70,13 @@ $$
 - 当n=3时为trigram：当前词的概率分布只和前两个词有关
 
 ### 数据平滑
+
 ngram概率计算一般由训练语料的最大似然估计得到，以3-gram为例：
+
 $$
 P(\text { 词 } 3 \mid \text { 词 } 1 \text { 词 } 2)=\frac{\operatorname{count}(\text { 词 } 1 \text { 词 } 2 \text { 词 } 3)}{\operatorname{count}(\text { 词 } 1 \text { 词 } 2)}
 $$
+
 如果句式(词1词2词3)在训练语料中从未出现过，而现实中其实是有这种表达形式存在的。怎么估算这个3gram的概率
 答案是, 将训练语料中出现过的句式的概率拿出一部分分配给未出现过。一般会采用两种方式处理：
 
@@ -113,6 +115,7 @@ $$
 训练一个ngram语言模型，如何衡量它对语言表达习惯约束的准确性呢？
 有一个直观的思路是：给定一个高质量的句子，好的模型生成这个句子的概率会比较高。于是有研究人员顺着这条思路提出了困惑度。
 困惑度（Perplexity）是一种衡量语言模型预测样本的好坏的指标，常用于自然语言处理中。
+
 $$
 \begin{aligned}
 \text { 交叉嫡 } H(\operatorname{corpus} D) &=\frac{1}{N} \sum_{i=1}^N-\frac{N_w}{N_D} \log _2(P(\text { 第 } i \text { 个句子 } \mid n g r a m \text { 语言模型 }))\\
@@ -167,8 +170,9 @@ $$
 ### 2. 计数调整
 
 对于N-gram的语言模型，调整计数主要针对`n<N`的ngram进行计数调整。主要思想是对于lower-gram，不关心其出现的次数，而关心其作为连接词的可能性，因此核心是将计数从原先的直接数量统计调整为可接词数量的统计。具体的计算方法如下：
+
 $$
-a\left(w_1^n\right)= \begin{cases}c\left(w_1^n\right) & n=N \quad \text { or } \quad w_1=<s> \\ \left|v: c\left(v: w_1^n\right)>0\right| & \text { otherwise }\end{cases}
+a\left(w_1^n\right)= \begin{cases}c\left(w_1^n\right) & n=N \quad \text { or } \quad w_1=\text{< s >} \\ \left|v: c\left(v: w_1^n\right)>0\right| & \text { otherwise }\end{cases}
 $$
 
 这里的 $c\left(w_1^n\right)$ 表明对于 $w_1^n$ 语料中的直接计数， $a\left(w_1^n\right)$ 表明调整后的计数。当 $\mathrm{n}=\mathrm{N}$ 或者 $w_1$ 为 $\langle s\rangle$ 时不需要调整计数；对于其他情况，需要将计数调整为 $w_1^n$ 之前可接词的数量。
@@ -201,7 +205,8 @@ $$
 
 这里的 $t_{n, k}$ 表示出现了k次的ngram个数，这里的 $k \in[1,4]$
 
-$$t_{n, k}=\left|w_1^n: a\left(w_1^n\right)=k\right|
+$$
+t_{n, k}=\left|w_1^n: a\left(w_1^n\right)=k\right|
 $$
 
 | t_{n,k} (n=1,2; k=1,2,3,4) | value | reason                                                                         |
@@ -231,9 +236,11 @@ $$
 ### 4. 计算伪概率
 
 伪概率计算公式如下：
+
 $$
 u\left(w_n \mid w_1^{n-1}\right)=\frac{a\left(w_1^n\right)-D_n\left(a\left(w_1^n\right)\right)}{\sum_x a\left(w_1^{n-1} x\right)}
 $$
+
 注意，当 $\mathrm{n}=1$ 时，计算 $\sum_x a\left(w_1^{n-1} x\right)$ 不考虑`<s>`，因为`<s>`之前不可能再接入词
 
 | unigram     | u value           | reason                                                                     |
@@ -285,7 +292,9 @@ $$
 
 这里的 $\epsilon$ 为空字符串，即可以认为是 $w_1^0$ ，所以回退值可计算为:
 
-$$b(\epsilon)=\frac{D_1(1) * 2+D_1(2) * 1+D_1(3) * 1}{\sum_{x \neq\langle s\rangle} a(x)}=\frac{9}{14}$$
+$$
+b(\epsilon)=\frac{D_1(1) * 2+D_1(2) * 1+D_1(3) * 1}{\sum_{x \neq\langle s\rangle} a(x)}=\frac{9}{14}
+$$
 
 首先计算unigram插值后的概率值，注意对于`<s>`的概率直接置为0
 
