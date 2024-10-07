@@ -45,10 +45,10 @@
 统计语言模型通过概率P（词序列）来衡量这个词序列与语言表达习惯的符合程度，P（词序列）越低，表示在解码过程中代表这个词序列的搜索路径越应该被舍弃。计算公式如下：
 
 $$
-\begin{align}
+\begin{aligned}
 P\left(\text { 词序列 } \text { word }_1 \text { word }_2 \ldots \text { word }_N\right) &= P\left(\text { word }_1\right) P\left(\text { word }_2 \mid \text { word }_1\right) ... P\left(\text { word }_N \mid \text { word }_1 \text { word }_2 \ldots \text { word }_{N-1}\right) \\
 & =\prod^N P\left(\text { word }_n \mid \text { word }_1^{n-1}\right) \quad \text { word }_1^{n-1} \text { 代表word } d_1 \text { word }_2 \ldots \text { word }_{n-1}
-\end{align}
+\end{aligned}
 $$
 
 以 $context_n$表示 $word_n$ 的历史信息 $word_1^{n-1}$ , 如果不对$context_n$的长度加以限制的话，$P(word_n | context_n)$，根本无法估计。
@@ -56,11 +56,11 @@ $$
 为了解决这个问题，对上面的概率公式引入$n-1$阶马尔可夫假设：假设$word_i$的出现概率只依赖于部分历史信息，于其他任何信息是相互独立的。这就是ngram语言模型的原理。修改后的公式如下：
 
 $$
-\begin{align}
+\begin{aligned}
 P\left(\text { 词序列 } \text { oord }_1 \text { word }_2 \ldots \text { word }_N\right)= & \prod^N P\left(\text { word }_i \mid \text { word }_{i-n+1}^{i-1}\right) \\
 
 & \text { word }_{i-n+1}^{i-1} \text { 代表 } \text { word }_{i-n+1} . \text { word }_{i-n+1} ... \text { word }_{i-1}
-\end{align}
+\end{aligned}
 $$
 
 常情况下n=1,2,3。对于再高阶的4-gram，5-gram就很少见，因为需要非常大的语料才能训练充分高阶的语言模型，而且模型本身的体积也会非常大（占内存）。
@@ -72,7 +72,6 @@ $$
 ### 数据平滑
 
 ngram概率计算一般由训练语料的最大似然估计得到，以3-gram为例：
-
 $$
 P(\text { 词 } 3 \mid \text { 词 } 1 \text { 词 } 2)=\frac{\operatorname{count}(\text { 词 } 1 \text { 词 } 2 \text { 词 } 3)}{\operatorname{count}(\text { 词 } 1 \text { 词 } 2)}
 $$
