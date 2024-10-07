@@ -73,7 +73,7 @@ $$
 
 ngram概率计算一般由训练语料的最大似然估计得到，以3-gram为例：
 $$
-P(\text { 词 } 3 \mid \text { 词 } 1 \text { 词 } 2)=\frac{\operatorname{count}(\text { 词 } 1 \text { 词 } 2 \text { 词 } 3)}{\operatorname{count}(\text { 词 } 1 \text { 词 } 2)}
+P(\text { 词 } 3 \mid \text { 词 } 1 \text { 词 } 2)=\frac{\text{count}(\text { 词 } 1 \text { 词 } 2 \text { 词 } 3)}{\text{count}(\text { 词 } 1 \text { 词 } 2)}
 $$
 
 如果句式(词1词2词3)在训练语料中从未出现过，而现实中其实是有这种表达形式存在的。怎么估算这个3gram的概率
