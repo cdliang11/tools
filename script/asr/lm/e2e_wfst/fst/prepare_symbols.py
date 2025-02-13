@@ -2,8 +2,8 @@
 
 import argparse
 
-from e2e.dict.lexicon import Lexicon
-from e2e.fst.slot import Slots
+from e2e_wfst.dict.lexicon import Lexicon
+from e2e_wfst.fst.slot import Slots
 
 
 def read_e2e_unit(e2e_unit_file):

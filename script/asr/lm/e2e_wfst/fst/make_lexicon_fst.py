@@ -2,7 +2,7 @@
 
 import argparse
 
-from e2e.dict.lexicon import Lexicon
+from e2e_wfst.dict.lexicon import Lexicon
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='make lexicon fst')

@@ -2,7 +2,7 @@
 
 import argparse
 
-from e2e.fst.slot import Slots
+from e2e_wfst.fst.slot import Slots
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(

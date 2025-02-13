@@ -1,8 +1,8 @@
 
 import os
 
-from e2e.lm.arpa import Arpa
-from e2e.fst.slot import Slots
+from e2e_wfst.lm.arpa import Arpa
+from e2e_wfst.fst.slot import Slots
 
 
 # Vocab write the following vocabs:
@@ -13,16 +13,8 @@ class Vocab:
 
     def __init__(self,
                  lm_file,
-                 slot_config_file=None,
-                 local_poi_lm_config=None):
+                 slot_config_file=None):
         lm_vocab = set(Arpa(lm_file).vocab)
-        if local_poi_lm_config is not None and os.path.exists(local_poi_lm_config):
-            with open(local_poi_lm_config, 'r') as fin:
-                for line in fin:
-                    arr = line.strip().split()
-                    assert len(arr) == 2
-                    locale, local_lm_path = arr[0], arr[1]
-                    lm_vocab.update(Arpa(local_lm_path).vocab)
         self.lm_vocab = sorted(lm_vocab)
         self.class_vocab = []
         if slot_config_file is not None:

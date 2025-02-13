@@ -3,7 +3,7 @@
 import copy
 import math
 import os
-from e2e.fst.stdfst import Arc, Fst
+from e2e_wfst.fst.stdfst import Arc, Fst
 """
 There are three cases in total for slot config:
 1. {}: emtpy slot, which is kept for replace on the fly for personalized

@@ -34,7 +34,9 @@ venv
 .DS_Store
 
 exp
+model
 raw_wav
 tensorboard
+diff.patch
 
 *.onnx
