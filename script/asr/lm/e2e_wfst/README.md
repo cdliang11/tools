@@ -14,9 +14,6 @@
 1. Build decoding graph
 
 ``` sh
-# Add env and python path
-. path.sh
-
 e2e/make_graph.sh \
   --e2e_unit $MODEL/unit.txt \
   --lm $MODEL/lm.arpa $dir
@@ -30,18 +27,6 @@ e2e/make_graph.sh \
 # 3. --fix_dict: dict for handing OOV or fix bug
 # 4. --static: true or false, if true static TLG, if false dynamic TL/G.
 
-```
-
-2. Decoding
-
-``` sh
-export GLOG_logtostderr=1
-export GLOG_v=2
-decoder_main --chunk_size 16 \
-  --wav_path model/BAC009S0764W0121.wav \
-  --model_path model/final.zip \
-  --dict_path model/words.txt \
-  --fst_path model/TLG.fst
 ```
 
 ## Implementation Details
